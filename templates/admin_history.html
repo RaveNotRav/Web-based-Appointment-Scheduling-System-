@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment History - Gregorio Family Clinic{% endblock %}
+
+{% block content %}
+<div class="admin-layout container">
+    <!-- Admin Sub-Navigation Header -->
+    <div class="admin-nav-bar glass-card mb-6">
+        <div class="admin-info">
+            <span class="admin-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <div>
+                <span class="text-xs text-muted block">Signed in as</span>
+                <span class="font-bold text-teal-900 text-sm">{{ admin_username }}</span>
+            </div>
+        </div>
+
+        <div class="admin-tabs">
+            <a href="{{ url_for('admin_dashboard_page') }}" class="admin-tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                Dashboard
+            </a>
+            <a href="{{ url_for('admin_history_page') }}" class="admin-tab active">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                History
+            </a>
+            <a href="{{ url_for('admin_logout_page') }}" class="admin-tab text-rose-600 hover-rose">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- History Card Container -->
+    <div class="glass-card p-6">
+        <!-- Filter and Search Header -->
+        <div class="history-controls-bar flex-between flex-wrap gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-teal-950">All Appointment Records</h1>
+                <p class="text-xs text-muted">Complete audit trail of all clinic bookings, sorted newest first.</p>
+            </div>
+
+            <div class="history-filters flex-center flex-wrap gap-3">
+                <!-- Search Box -->
+                <div class="search-input-wrapper">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="history-search-input" class="form-control form-control-sm search-field" placeholder="Search by name, ref, or phone...">
+                </div>
+
+                <!-- Status Filter Dropdown -->
+                <div class="status-filter-wrapper">
+                    <select id="history-status-filter" class="form-control form-control-sm form-select-sm">
+                        <option value="All">All Statuses</option>
+                        <option value="Booked">Booked (Active)</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <!-- Refresh Button -->
+                <button id="history-refresh-btn" class="btn btn-glass-sm" title="Refresh List">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Counter info -->
+        <div class="mb-3 text-xs text-muted flex-between">
+            <span id="history-count-text">Loading records...</span>
+            <span class="text-xs text-teal-700 font-medium">Sorted by newest date first</span>
+        </div>
+
+        <!-- History Records Table -->
+        <div class="table-responsive">
+            <table class="glass-table w-full">
+                <thead>
+                    <tr>
+                        <th>Reference No</th>
+                        <th>Patient Name</th>
+                        <th>Age</th>
+                        <th>Appointment Date</th>
+                        <th>Time Slot</th>
+                        <th>Service</th>
+                        <th>Contact Number</th>
+                        <th>Status</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <!-- Populated dynamically via admin.js -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty state -->
+        <div id="history-empty-state" class="text-center py-12 hidden">
+            <div class="placeholder-icon mb-3">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <h4 class="font-bold text-slate-700">No appointments found</h4>
+            <p class="text-muted text-xs">Try adjusting your search query or filter option.</p>
+        </div>
+    </div>
+</div>
+
+<!-- STATUS CONFIRMATION MODAL -->
+<div id="status-confirm-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card glass-card max-w-sm text-center p-6 animate-scale-up">
+        <div id="confirm-modal-icon" class="modal-action-icon mb-3">
+            <!-- Icon set dynamically -->
+        </div>
+        <h3 id="confirm-modal-title" class="text-xl font-bold mb-2">Confirm Action</h3>
+        <p id="confirm-modal-desc" class="text-muted text-sm mb-6">Are you sure you want to proceed?</p>
+        <div class="flex-center gap-3">
+            <button type="button" id="confirm-modal-cancel-btn" class="btn btn-outline-sm flex-1">Cancel</button>
+            <button type="button" id="confirm-modal-proceed-btn" class="btn btn-primary flex-1">Confirm</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}?v=3"></script>
+{% endblock %}

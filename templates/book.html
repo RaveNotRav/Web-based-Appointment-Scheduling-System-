@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Book an Appointment - Gregorio Family Clinic{% endblock %}
+
+{% block content %}
+<div class="booking-page-container container">
+    <!-- Header Banner -->
+    <div class="page-header text-center mb-6">
+        <h1 class="page-title">Book Your Appointment</h1>
+        <p class="page-subtitle">Select an available date on the calendar below to reserve your consultation.</p>
+    </div>
+
+    <!-- Calendar Legend -->
+    <div class="calendar-legend-bar glass-card mb-6">
+        <div class="legend-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span>Availability Legend:</span>
+        </div>
+        <div class="legend-items">
+            <div class="legend-item">
+                <span class="legend-color-box legend-green"></span>
+                <span class="legend-text"><strong>Open &amp; Available</strong> (Slots open)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color-box legend-red"></span>
+                <span class="legend-text"><strong>Fully Booked</strong> (All slots full)</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color-box legend-grey"></span>
+                <span class="legend-text"><strong>Unavailable</strong> (Past dates / Sundays closed)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Layout: Bento Calendar + Animated Form -->
+    <div class="booking-grid">
+        <!-- CALENDAR CARD -->
+        <div class="calendar-card glass-card">
+            <!-- Calendar Navigation Header -->
+            <div class="calendar-nav">
+                <div class="month-title-wrapper">
+                    <h2 id="calendar-month-year" class="month-title">Loading...</h2>
+                    <span id="calendar-subtitle" class="month-sub">Clinic Hours: 9:00 AM - 6:00 PM (Mon-Sat)</span>
+                </div>
+                <div class="nav-btn-group">
+                    <button id="prev-month-btn" class="calendar-nav-btn" aria-label="Previous Month" title="Previous Month">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="today-btn" class="calendar-nav-btn today-shortcut-btn" title="Jump to Today">
+                        Today
+                    </button>
+                    <button id="next-month-btn" class="calendar-nav-btn" aria-label="Next Month" title="Next Month">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Days of Week Header -->
+            <div class="calendar-weekdays">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span class="text-rose-500 font-semibold">Sun</span>
+            </div>
+
+            <!-- Calendar Bento Grid of Dates -->
+            <div id="calendar-days-grid" class="calendar-days-grid" role="grid">
+                <!-- Dynamically populated via booking.js -->
+            </div>
+
+            <!-- Calendar Footer Hint -->
+            <div class="calendar-footer-hint text-xs text-muted text-center mt-4">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block mr-1"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Sundays are clinic rest days. Green dates indicate available slots. Each slot accommodates a maximum of 5 patients.
+            </div>
+        </div>
+
+        <!-- BOOKING FORM WRAPPER -->
+        <div class="booking-form-wrapper">
+            <!-- Placeholder prompt when no date is selected -->
+            <div id="form-placeholder" class="form-placeholder-card glass-card text-center p-8">
+                <div class="placeholder-icon mb-4">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                        <line x1="16" x2="16" y1="2" y2="6"/>
+                        <line x1="8" x2="8" y1="2" y2="6"/>
+                        <line x1="3" x2="21" y1="10" y2="10"/>
+                        <path d="M12 14v4"/>
+                        <path d="M10 16h4"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Select a Date to Book</h3>
+                <p class="text-muted text-sm max-w-xs mx-auto">
+                    Click any <span class="text-teal-700 font-semibold">green date</span> on the calendar to open the booking details form.
+                </p>
+                <div class="mt-6 flex-center">
+                    <span class="pulse-indicator"></span>
+                    <span class="text-xs text-teal-800 ml-2 font-medium">Ready for your schedule</span>
+                </div>
+            </div>
+
+            <!-- Active Booking Form Card: FIXED header + SCROLLABLE body -->
+            <div id="booking-form-card" class="booking-form-card glass-card hidden">
+
+                <!-- FIXED summary header (no scroll) -->
+                <div class="booking-form-fixed-header">
+                    <div class="flex-between">
+                        <div>
+                            <span class="badge badge-teal mb-1">Appointment Details</span>
+                            <h3 id="form-selected-date-display" class="text-xl font-bold text-teal-900">Monday, October 26, 2026</h3>
+                            <p class="text-xs text-muted">Fill in patient details below to complete booking.</p>
+                        </div>
+                        <button type="button" id="close-form-btn" class="btn-icon-subtle" title="Close form" aria-label="Close form">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SCROLLABLE form fields area -->
+                <div class="booking-form-scroll-area">
+                    <form id="appointment-form" novalidate>
+                        <input type="hidden" id="appointment_date" name="appointment_date" value="">
+
+                        <!-- First Name + Middle Name (side by side) -->
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="first_name" class="form-label">
+                                    First Name <span class="required-star">*</span>
+                                </label>
+                                <input type="text" id="first_name" name="first_name" class="form-control" placeholder="e.g. Maria" maxlength="100" required autocomplete="given-name">
+                                <span class="inline-error" id="error-first_name"></span>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="middle_name" class="form-label">
+                                    Middle Name <span class="font-normal text-muted">(Optional)</span>
+                                </label>
+                                <input type="text" id="middle_name" name="middle_name" class="form-control" placeholder="e.g. Clara" maxlength="100" autocomplete="additional-name">
+                                <span class="inline-error" id="error-middle_name"></span>
+                            </div>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="form-group">
+                            <label for="last_name" class="form-label">
+                                Last Name <span class="required-star">*</span>
+                            </label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" placeholder="e.g. Santos" maxlength="100" required autocomplete="family-name">
+                            <span class="inline-error" id="error-last_name"></span>
+                        </div>
+
+                        <!-- Age & Contact Number Row -->
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="age" class="form-label">
+                                    Age <span class="required-star">*</span>
+                                </label>
+                                <input type="number" id="age" name="age" class="form-control" placeholder="e.g. 28" min="1" max="120" required>
+                                <span class="inline-error" id="error-age"></span>
+                            </div>
+
+                            <div class="form-group flex-2">
+                                <label for="contact_number" class="form-label">
+                                    Contact Number <span class="required-star">*</span>
+                                </label>
+                                <input type="tel" id="contact_number" name="contact_number" class="form-control" placeholder="09XXXXXXXXX" maxlength="11" required autocomplete="tel">
+                                <span class="inline-error" id="error-contact_number"></span>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group">
+                            <label for="address" class="form-label">
+                                Address (Street / Barangay) <span class="required-star">*</span>
+                            </label>
+                            <input type="text" id="address" name="address" class="form-control" placeholder="e.g. Unit 4B, 123 Rizal Street, Brgy. San Antonio" maxlength="255" required autocomplete="street-address">
+                            <span class="inline-error" id="error-address"></span>
+                        </div>
+
+                        <!-- Province & City Row -->
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="province" class="form-label">
+                                    Province <span class="required-star">*</span>
+                                </label>
+                                <input type="text" id="province" name="province" class="form-control" placeholder="e.g. Metro Manila" maxlength="100" required>
+                                <span class="inline-error" id="error-province"></span>
+                            </div>
+
+                            <div class="form-group flex-1">
+                                <label for="city" class="form-label">
+                                    City / Municipality <span class="required-star">*</span>
+                                </label>
+                                <input type="text" id="city" name="city" class="form-control" placeholder="e.g. Quezon City" maxlength="100" required>
+                                <span class="inline-error" id="error-city"></span>
+                            </div>
+                        </div>
+
+                        <!-- TIME Slot (label changed to "TIME") -->
+                        <div class="form-group">
+                            <label for="time_slot" class="form-label">
+                                TIME <span class="required-star">*</span>
+                            </label>
+                            <select id="time_slot" name="time_slot" class="form-control form-select" required>
+                                <option value="">-- Choose an Available Time Slot --</option>
+                                {% for slot in time_slots %}
+                                    <option value="{{ slot }}">{{ slot }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="inline-error" id="error-time_slot"></span>
+                        </div>
+
+                        <!-- Service Dropdown -->
+                        <div class="form-group">
+                            <label for="service" class="form-label">
+                                Medical Service <span class="required-star">*</span>
+                            </label>
+                            <select id="service" name="service" class="form-control form-select" required>
+                                <option value="">-- Select Required Medical Service --</option>
+                                {% for svc in services %}
+                                    <option value="{{ svc }}">{{ svc }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="inline-error" id="error-service"></span>
+                        </div>
+
+                        <!-- General / Duplicate Error Banner -->
+                        <div id="general-form-error" class="error-banner mb-4 hidden" role="alert"></div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions mt-4">
+                            <button type="submit" id="submit-booking-btn" class="btn btn-primary btn-block btn-lg shadow-teal">
+                                <span class="btn-text">Confirm &amp; Book Appointment</span>
+                                <span class="spinner hidden" id="booking-spinner"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS CONFIRMATION MODAL (Glassmorphism Pop-up) -->
+<div id="success-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card glass-card animate-scale-up">
+        <div class="modal-header text-center">
+            <div class="modal-icon-success mb-3">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <h2 id="modal-title" class="text-2xl font-bold text-teal-900 mb-1">Appointment Confirmed!</h2>
+            <p class="text-muted text-sm">Thank you for choosing Gregorio Family Clinic. Your booking has been safely recorded.</p>
+        </div>
+
+        <div class="modal-body my-5">
+            <div class="confirmation-summary-card">
+                <div class="summary-ref-box">
+                    <span class="ref-label">Reference Number</span>
+                    <span id="confirm-ref-no" class="ref-number">GFC-20261024-0001</span>
+                    <button type="button" id="copy-ref-btn" class="btn-copy-ref" title="Copy Reference Number">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                        Copy
+                    </button>
+                </div>
+
+                <div class="summary-details-list">
+                    <div class="summary-row">
+                        <span class="summary-key">Patient Name:</span>
+                        <span id="confirm-patient-name" class="summary-val font-semibold">Maria Santos</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-key">Service:</span>
+                        <span id="confirm-service" class="summary-val badge badge-teal">Prenatal Checkup</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-key">Appointment Date:</span>
+                        <span id="confirm-date" class="summary-val">October 26, 2026</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-key">Time Slot:</span>
+                        <span id="confirm-time" class="summary-val font-medium">9:00 AM - 11:00 AM</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-key">Contact Number:</span>
+                        <span id="confirm-contact" class="summary-val">09171234567</span>
+                    </div>
+                </div>
+
+                <div class="reminder-box mt-4">
+                    <p class="text-xs text-teal-800">
+                        <strong>Reminders:</strong> Please arrive 10-15 minutes before your scheduled slot. For inquiries or rescheduling, message us on FB or call 09979865335.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer flex-center gap-3">
+            <button type="button" id="print-modal-btn" class="btn btn-outline-sm flex-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-1"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                Print Slip
+            </button>
+            <button type="button" id="close-modal-btn" class="btn btn-primary flex-1">
+                Done &amp; Close
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/booking.js') }}?v=3"></script>
+{% endblock %}

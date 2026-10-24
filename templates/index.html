@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Gregorio Family Clinic - Gentle Care for Every Stage of Womanhood{% endblock %}
+
+{% block content %}
+<div class="landing-page container">
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="hero-badge animate-fade-in">
+            <span class="badge-dot"></span>
+            <span>Compassionate Healthcare & OB-GYN Services</span>
+        </div>
+        
+        <h1 class="hero-title animate-fade-up">
+            Gentle Care for Every Stage of <span class="gradient-text">Womanhood</span>
+        </h1>
+        
+        <p class="hero-subtitle animate-fade-up delay-1">
+            Book your check-up in just a few clicks. Experienced care in a welcoming, serene, and modern clinic environment.
+        </p>
+        
+        <div class="hero-cta-group animate-fade-up delay-2">
+            <a href="{{ url_for('book_page') }}" class="btn btn-primary btn-lg shadow-teal">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8" x2="8" y1="2" y2="6"/>
+                    <line x1="3" x2="21" y1="10" y2="10"/>
+                </svg>
+                Book an Appointment
+            </a>
+            <a href="#services" class="btn btn-glass btn-lg">
+                View Services
+            </a>
+        </div>
+
+        <!-- Quick Clinic Highlights Pill Bar -->
+        <div class="hero-stats-grid glass-card animate-fade-up delay-3">
+            <div class="stat-item">
+                <span class="stat-number">3 Daily Slots</span>
+                <span class="stat-label">9-11 AM, 1-3 PM, 4-6 PM</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">Max 5 Patients</span>
+                <span class="stat-label">Per Slot for Zero Crowding</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">Mon - Sat</span>
+                <span class="stat-label">Dedicated Personal Care</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview Section -->
+    <section id="services" class="services-section mt-16">
+        <div class="section-header text-center mb-10">
+            <h2 class="section-title">Our Specialized Services</h2>
+            <p class="section-subtitle">Comprehensive women's health treatments tailored to every chapter of your journey</p>
+        </div>
+
+        <div class="services-bento-grid">
+            <!-- Service 1: Prenatal Checkup -->
+            <div class="service-card glass-card">
+                <div class="service-icon-box bg-teal-subtle">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                        <path d="M12 5c-1 0-2 1-2 3s2 3 2 4"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Prenatal Checkup</h3>
+                <p class="service-desc">
+                    Comprehensive maternal and fetal wellness assessments, vital monitoring, and personalized nutritional guidance throughout your pregnancy.
+                </p>
+                <a href="{{ url_for('book_page') }}" class="service-link">
+                    Book Prenatal <span>&rarr;</span>
+                </a>
+            </div>
+
+            <!-- Service 2: Ultrasound -->
+            <div class="service-card glass-card">
+                <div class="service-icon-box bg-rose-subtle">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                        <path d="M2 12h20"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Ultrasound</h3>
+                <p class="service-desc">
+                    High-resolution pelvic and obstetric ultrasound imaging to monitor baby development and evaluate reproductive organ health.
+                </p>
+                <a href="{{ url_for('book_page') }}" class="service-link">
+                    Book Ultrasound <span>&rarr;</span>
+                </a>
+            </div>
+
+            <!-- Service 3: Pap Smear -->
+            <div class="service-card glass-card">
+                <div class="service-icon-box bg-teal-subtle">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+                        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Pap Smear</h3>
+                <p class="service-desc">
+                    Gentle, preventative cervical screening for early cellular changes and proactive protection against cervical abnormalities.
+                </p>
+                <a href="{{ url_for('book_page') }}" class="service-link">
+                    Book Pap Smear <span>&rarr;</span>
+                </a>
+            </div>
+
+            <!-- Service 4: Well-Woman Exam -->
+            <div class="service-card glass-card">
+                <div class="service-icon-box bg-rose-subtle">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h3 class="service-title">Well-Woman Exam</h3>
+                <p class="service-desc">
+                    Holistic routine check-ups, breast examinations, hormonal balance consultations, and age-specific preventative health counseling.
+                </p>
+                <a href="{{ url_for('book_page') }}" class="service-link">
+                    Book Well-Woman <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3-Step Simple Booking Flow -->
+    <section class="process-section mt-16 mb-16">
+        <div class="glass-card p-10 text-center">
+            <h2 class="text-2xl font-bold mb-2">How Easy Is It To Book?</h2>
+            <p class="text-muted mb-8">No long waiting lines. Reserve your doctor's appointment in under 2 minutes.</p>
+
+            <div class="grid-steps">
+                <div class="step-card">
+                    <div class="step-badge">1</div>
+                    <h4 class="font-bold mb-1">Pick an Open Date</h4>
+                    <p class="text-xs text-muted">Browse our real-time interactive calendar. Green dates have open slots.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-badge">2</div>
+                    <h4 class="font-bold mb-1">Select Time & Service</h4>
+                    <p class="text-xs text-muted">Choose your preferred time slot and fill in basic patient details.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-badge">3</div>
+                    <h4 class="font-bold mb-1">Instant Confirmation</h4>
+                    <p class="text-xs text-muted">Receive your unique reference number and arrive relaxed on your day.</p>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <a href="{{ url_for('book_page') }}" class="btn btn-primary btn-md">
+                    Reserve Your Slot Now
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

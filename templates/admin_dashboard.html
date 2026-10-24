@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Gregorio Family Clinic{% endblock %}
+
+{% block content %}
+<div class="admin-layout container">
+    <!-- Admin Sub-Navigation Header -->
+    <div class="admin-nav-bar glass-card mb-6">
+        <div class="admin-info">
+            <span class="admin-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <div>
+                <span class="text-xs text-muted block">Signed in as</span>
+                <span class="font-bold text-teal-900 text-sm">{{ admin_username }}</span>
+            </div>
+        </div>
+
+        <div class="admin-tabs">
+            <a href="{{ url_for('admin_dashboard_page') }}" class="admin-tab active">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                Dashboard
+            </a>
+            <a href="{{ url_for('admin_history_page') }}" class="admin-tab">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                History
+            </a>
+            <a href="{{ url_for('admin_logout_page') }}" class="admin-tab text-rose-600 hover-rose">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Admin Grid: Left Panel (Appointments for Selected Date) + Right Panel (Calendar) -->
+    <div class="admin-dashboard-grid">
+        <!-- LEFT PANEL: APPOINTMENTS FOR SELECTED DATE -->
+        <div class="admin-appointments-panel glass-card p-5">
+            <div class="panel-header mb-4">
+                <div class="panel-title-group mb-2">
+                    <span class="badge badge-teal">Date Schedule</span>
+                    <h2 id="selected-date-heading" class="text-xl font-bold text-teal-950 mt-1">Today's Appointments</h2>
+                    <p id="selected-date-sub" class="text-xs text-muted">{{ today_str }}</p>
+                </div>
+
+                <!-- Service Filter Dropdown -->
+                <div class="filter-group">
+                    <label for="service-filter" class="form-label text-xs font-semibold">Type of Service Filter:</label>
+                    <select id="service-filter" class="form-control form-select-sm">
+                        <option value="All">All Services</option>
+                        {% for svc in services %}
+                            <option value="{{ svc }}">{{ svc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Total count badge -->
+            <div class="flex-between mb-3 text-xs text-muted">
+                <span id="panel-count-text">Showing 0 appointments</span>
+                <button id="refresh-panel-btn" class="btn-text-action text-xs text-teal-700" title="Refresh">
+                    &#x21bb; Refresh
+                </button>
+            </div>
+
+            <!-- List of Appointment Cards -->
+            <div id="appointments-list-container" class="appointments-cards-scroll">
+                <!-- Dynamically populated via admin.js -->
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: ADMIN CALENDAR WITH BOOKED COUNTS -->
+        <div class="admin-calendar-panel glass-card p-5">
+            <div class="calendar-nav mb-4">
+                <div>
+                    <h2 id="admin-calendar-month-year" class="month-title">Loading Calendar...</h2>
+                    <span class="text-xs text-muted">Click any date to inspect and manage patient appointments</span>
+                </div>
+                <div class="nav-btn-group">
+                    <button id="admin-prev-month" class="calendar-nav-btn" title="Previous Month">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="admin-today-btn" class="calendar-nav-btn today-shortcut-btn" title="Jump to Current Month">
+                        Today
+                    </button>
+                    <button id="admin-next-month" class="calendar-nav-btn" title="Next Month">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Weekdays -->
+            <div class="calendar-weekdays mb-2">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span class="text-rose-500 font-semibold">Sun</span>
+            </div>
+
+            <!-- Large Admin Calendar Grid -->
+            <div id="admin-calendar-grid" class="admin-calendar-grid" role="grid">
+                <!-- Dynamically generated via admin.js -->
+            </div>
+
+            <!-- Calendar Summary / Status Legend -->
+            <div class="admin-calendar-legend mt-4 flex-between text-xs text-muted pt-3 border-t">
+                <div class="flex-center gap-4">
+                    <span class="flex-center gap-1">
+                        <span class="dot-indicator bg-teal-500"></span> Open & Active
+                    </span>
+                    <span class="flex-center gap-1">
+                        <span class="dot-indicator bg-rose-500"></span> Fully Booked (15/15)
+                    </span>
+                    <span class="flex-center gap-1">
+                        <span class="dot-indicator bg-slate-400"></span> Past / Sunday
+                    </span>
+                </div>
+                <span>* Counts reflect active booked patients</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STATUS CONFIRMATION MODAL -->
+<div id="status-confirm-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card glass-card max-w-sm text-center p-6 animate-scale-up">
+        <div id="confirm-modal-icon" class="modal-action-icon mb-3">
+            <!-- Icon changed dynamically -->
+        </div>
+        <h3 id="confirm-modal-title" class="text-xl font-bold mb-2">Confirm Action</h3>
+        <p id="confirm-modal-desc" class="text-muted text-sm mb-6">Are you sure you want to proceed?</p>
+        <div class="flex-center gap-3">
+            <button type="button" id="confirm-modal-cancel-btn" class="btn btn-outline-sm flex-1">Cancel</button>
+            <button type="button" id="confirm-modal-proceed-btn" class="btn btn-primary flex-1">Confirm</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}?v=3"></script>
+{% endblock %}
