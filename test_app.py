@@ -93,6 +93,10 @@ class ClinicTestCase(unittest.TestCase):
     def test_past_month_rejected(self):
         self.assertEqual(self.client.get("/api/availability?month=2020-01").status_code, 400)
 
+    def test_admin_can_view_past_month(self):
+        self.login()
+        self.assertEqual(self.client.get("/api/availability?month=2020-01").status_code, 200)
+
     # ---------- Booking (the reported bug) ----------
     def test_booking_saves_to_database(self):
         r = self.book()

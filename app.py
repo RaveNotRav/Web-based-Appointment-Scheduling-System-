@@ -151,8 +151,9 @@ def api_availability():
                 "message": "Invalid month format. Please use YYYY-MM."
             }), 400
 
-    # Ensure user cannot query months prior to current month/year
-    if (year < today.year) or (year == today.year and month < today.month):
+    # Public visitors cannot browse past months; logged-in admins can (to review past appointments)
+    is_past_month = (year < today.year) or (year == today.year and month < today.month)
+    if is_past_month and not session.get("admin_id"):
         return jsonify({
             "success": False,
             "message": "Navigation to past months is not permitted."

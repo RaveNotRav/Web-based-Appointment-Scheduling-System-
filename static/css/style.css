@@ -1827,3 +1827,15 @@ body.medical-theme {
 }
 
 #slot-capacity-info, .slot-info-box { display: none !important; }
+
+/* ---- Mobile calendar fit (final QA fix) ---- */
+.booking-grid > * { min-width: 0; }
+.calendar-weekdays, .calendar-days-grid { grid-template-columns: repeat(7, minmax(0, 1fr)) !important; }
+@media (max-width: 640px) {
+    .calendar-card { padding: 0.9rem !important; }
+    .calendar-days-grid, .calendar-weekdays { gap: 4px !important; }
+    .date-cell { aspect-ratio: auto !important; min-height: 50px !important; padding: 0.3rem !important; }
+    .date-cell .cell-slot-count, .date-cell .cell-status-label { display: none !important; }
+    .calendar-nav { flex-wrap: wrap; gap: 0.5rem; }
+    .calendar-weekdays span { font-size: 0.7rem; }
+}
